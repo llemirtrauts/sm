@@ -1,0 +1,13 @@
+TestCase( "CoreTestCase", {
+   setUp: function(){
+      alert("setting up");
+   },
+   "test that true is true test": function(){
+      alert(1);
+      assert(true);
+   },
+   "test that stu is stu test": function() {
+      assertEqual("stu", "stu");
+   }   
+
+} );
