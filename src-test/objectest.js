@@ -15,12 +15,6 @@ TestCase( "ObjectTestCase", {
       assertEquals("object", typeof objectInstance);
    },
 
-   "test created object has constructor": function() {
-      assertEquals(Object.prototype, this.object.constructor);
-      var objectInstance = SM.object(this.object);
-      assertTrue(objectInstance.constructor != this.object.constructor);
-   },
-
    "test that independent objects are created": function() {   
       var instance1 = SM.object(this.object),
          instance2 = SM.object(this.object);
