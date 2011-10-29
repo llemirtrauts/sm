@@ -144,26 +144,52 @@ if( typeof SM == "undefined" || !SM ) {
 
    SM.namespace("event");
 
-   SM.event.Observable = {
-      events: {},
-      
-      
-      pub: function(name) {
-         var event = this.events[name];
+   SM.event.observable = {
 
-         for(var i = 0, l = e.length; i < l; i++) {
-            event();    
+      pub: function(name) {
+         var event;
+
+         //ensure that the event object and named event array exist
+         if(this.events && event = this.events[name]) {
+            for(var i = 0, l = event.length; i < l; i++) {
+               event[i]();    
+            }
          }
       },
 
       sub: function(name, handler) {
          var events = this.events;
 
-         if(events[name] == undefined) {
+         if(typeof handler != "function") {
+            throw new TypeError("handler should be a function");
+         }
+
+         if(!events) {
+            events = this.events = {};
+         }
+         
+         if(!events[name]) {
             events[name] = [];
          }
          events[name].push(handler);
+      },
+
+      unSub: function(name, handler) {
+         if(!name) { //clear all events
+            this.events = {};
+         } else {
+            if(!handler) { //clear all handlers for a particular event and clear the event
+               this.events[name] = null;
+            } else {
+               for(var i = 0, l = this.events[name].length; i < l; i++) {
+                  if(this.events[name][i] === handler) {
+                     this.events[name].splice(i, 1);
+                  }
+               }
+            }
+         }
       }
    }
 }());
+
 
