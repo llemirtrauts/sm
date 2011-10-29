@@ -146,18 +146,27 @@ if( typeof SM == "undefined" || !SM ) {
 
    SM.event.observable = {
 
+      /**
+       * Fires events. Callbacks are passed the same arguments
+       * passed to pub apart from the event name
+       */
       pub: function(name) {
-         var event;
+         var event, events, handler, args;
+
+         args = Array.prototype.slice.call(arguments, 1, arguments.length);
+         events = this.events;
 
          //ensure that the event object and named event array exist
-         if(this.events && event = this.events[name]) {
+         if(events && events[name]) {
+            event = events[name];
             for(var i = 0, l = event.length; i < l; i++) {
-               event[i]();    
+               handler = event[i];
+               handler.func.apply(handler.context || this, args);    
             }
          }
       },
 
-      sub: function(name, handler) {
+      sub: function(name, handler, context) {
          var events = this.events;
 
          if(typeof handler != "function") {
@@ -171,7 +180,7 @@ if( typeof SM == "undefined" || !SM ) {
          if(!events[name]) {
             events[name] = [];
          }
-         events[name].push(handler);
+         events[name].push({func: handler, context: context});
       },
 
       unSub: function(name, handler) {
@@ -182,8 +191,9 @@ if( typeof SM == "undefined" || !SM ) {
                this.events[name] = null;
             } else {
                for(var i = 0, l = this.events[name].length; i < l; i++) {
-                  if(this.events[name][i] === handler) {
+                  if(this.events[name][i].func === handler) {
                      this.events[name].splice(i, 1);
+                     break;
                   }
                }
             }
